@@ -1,75 +1,80 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const scoreEl = document.getElementById("scoreVal");
-const overlay = document.getElementById("touchMsg");
+const scoreEl = document.getElementById("score");
+const highEl = document.getElementById("highScore");
+const overlay = document.getElementById("startOverlay");
 
-// Size setup
-const gridSize = 20;
-canvas.width = 400;
-canvas.height = 400;
+const box = 20;
+const rows = canvas.height / box;
+const cols = canvas.width / box;
 
-let snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }];
-let food = { x: 15, y: 15 };
+let snake = [{x: 10, y: 10}];
+let food = {x: 15, y: 10};
 let dx = 0, dy = 0;
 let score = 0;
+let highScore = localStorage.getItem("snakeHigh") || 0;
+highEl.innerText = highScore;
+
 let lastTime = 0;
-let moveInterval = 100; // Speed in ms (lower is faster)
-let accumulator = 0;
+let speed = 120; // Lower is faster
 let active = false;
 
 // Inputs
-const input = (dir) => {
-    if(!active) { active = true; overlay.style.opacity = "0"; dx = 1; dy = 0; }
-    if(dir === 'U' && dy === 0) { dx = 0; dy = -1; }
-    if(dir === 'D' && dy === 0) { dx = 0; dy = 1; }
-    if(dir === 'L' && dx === 0) { dx = -1; dy = 0; }
-    if(dir === 'R' && dx === 0) { dx = 1; dy = 0; }
-};
+function changeDir(dir) {
+    if (!active) { active = true; overlay.style.display = "none"; }
+    if (dir === "UP" && dy === 0) { dx = 0; dy = -1; }
+    if (dir === "DOWN" && dy === 0) { dx = 0; dy = 1; }
+    if (dir === "LEFT" && dx === 0) { dx = -1; dy = 0; }
+    if (dir === "RIGHT" && dx === 0) { dx = 1; dy = 0; }
+}
 
-// Listeners
+// Controls
 window.addEventListener("keydown", e => {
-    if(e.key === "ArrowUp") input('U');
-    if(e.key === "ArrowDown") input('D');
-    if(e.key === "ArrowLeft") input('L');
-    if(e.key === "ArrowRight") input('R');
+    if(e.key === "ArrowUp") changeDir("UP");
+    if(e.key === "ArrowDown") changeDir("DOWN");
+    if(e.key === "ArrowLeft") changeDir("LEFT");
+    if(e.key === "ArrowRight") changeDir("RIGHT");
 });
 
-document.getElementById("u").onclick = () => input('U');
-document.getElementById("d").onclick = () => input('D');
-document.getElementById("l").onclick = () => input('L');
-document.getElementById("r").onclick = () => input('R');
+document.getElementById("uBtn").onclick = () => changeDir("UP");
+document.getElementById("dBtn").onclick = () => changeDir("DOWN");
+document.getElementById("lBtn").onclick = () => changeDir("LEFT");
+document.getElementById("rBtn").onclick = () => changeDir("RIGHT");
 
-function gameLoop(currentTime) {
-    const deltaTime = currentTime - lastTime;
+function main(currentTime) {
+    window.requestAnimationFrame(main);
+    const secondsSinceLastRender = (currentTime - lastTime);
+    if (secondsSinceLastRender < speed) return;
     lastTime = currentTime;
 
-    if (active) {
-        accumulator += deltaTime;
-        if (accumulator >= moveInterval) {
-            update();
-            accumulator = 0;
-        }
-    }
-    
+    update();
     draw();
-    requestAnimationFrame(gameLoop);
 }
 
 function update() {
+    if (!active) return;
+
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-    // Wall hit
-    if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) return reset();
-    
-    // Body hit
-    if (snake.some(s => s.x === head.x && s.y === head.y)) return reset();
+    // Death Check
+    if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows || 
+        snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem("snakeHigh", score);
+        }
+        alert("Oops! Game Over.");
+        location.reload();
+        return;
+    }
 
     snake.unshift(head);
 
+    // Eat Food
     if (head.x === food.x && head.y === food.y) {
         score++;
-        scoreEl.innerText = score.toString().padStart(2, '0');
-        moveInterval = Math.max(60, 100 - (score * 2)); // Dynamic speed
+        scoreEl.innerText = score;
+        speed = Math.max(70, 120 - (score * 2)); // Speed up!
         spawnFood();
     } else {
         snake.pop();
@@ -78,51 +83,39 @@ function update() {
 
 function spawnFood() {
     food = {
-        x: Math.floor(Math.random() * 20),
-        y: Math.floor(Math.random() * 20)
+        x: Math.floor(Math.random() * cols),
+        y: Math.floor(Math.random() * rows)
     };
+    // Don't spawn food on snake body
+    if (snake.some(seg => seg.x === food.x && seg.y === food.y)) spawnFood();
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Grid (Subtle)
-    ctx.strokeStyle = "#0f172a";
-    for(let i=0; i<canvas.width; i+=gridSize) {
-        ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(400,i); ctx.stroke();
+    // 1. Draw Checkerboard Background
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            ctx.fillStyle = (i + j) % 2 === 0 ? "#aad751" : "#a2d149";
+            ctx.fillRect(i * box, j * box, box, box);
+        }
     }
 
-    // Food
-    ctx.fillStyle = "#f43f5e";
-    ctx.shadowBlur = 15; ctx.shadowColor = "#f43f5e";
+    // 2. Draw Red Apple
+    ctx.fillStyle = "#e74c3c";
     ctx.beginPath();
-    ctx.arc(food.x * gridSize + 10, food.y * gridSize + 10, 7, 0, Math.PI * 2);
+    ctx.arc(food.x * box + box/2, food.y * box + box/2, box/2 - 2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Snake
-    ctx.shadowBlur = 0;
-    snake.forEach((s, i) => {
-        ctx.fillStyle = i === 0 ? "#38bdf8" : "#0ea5e9";
-        const r = 5; // Rounded corners
-        const x = s.x * gridSize + 1;
-        const y = s.y * gridSize + 1;
-        const w = gridSize - 2;
-        ctx.beginPath();
-        ctx.roundRect(x, y, w, w, r);
-        ctx.fill();
+    // 3. Draw Blue Snake
+    snake.forEach((seg, index) => {
+        ctx.fillStyle = index === 0 ? "#4571e3" : "#527efd";
+        ctx.fillRect(seg.x * box, seg.y * box, box, box);
+        // Little eyes for the head
+        if (index === 0) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(seg.x * box + 4, seg.y * box + 4, 4, 4);
+            ctx.fillRect(seg.x * box + 12, seg.y * box + 4, 4, 4);
+        }
     });
 }
 
-function reset() {
-    alert("CRASH DETECTED. SCORE: " + score);
-    snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }];
-    dx = 0; dy = 0; score = 0;
-    scoreEl.innerText = "00";
-    moveInterval = 100;
-    active = false;
-    overlay.style.opacity = "1";
-}
-
-// Start
-requestAnimationFrame(gameLoop);
+window.requestAnimationFrame(main);
