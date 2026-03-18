@@ -1,1 +1,114 @@
+:root {
+    --bg-dark: #0f172a;
+    --panel-bg: #1e293b;
+    --accent: #38bdf8;
+    --food: #fb7185;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.game-container {
+    background: var(--panel-bg);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: 440px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.brand h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+.badge {
+    font-size: 0.6rem;
+    background: var(--accent);
+    color: var(--bg-dark);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+canvas {
+    background: #020617;
+    border-radius: 12px;
+    display: block;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+.footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer p {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+button {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background: var(--accent);
+    color: var(--bg-dark);
+    box-shadow: 0 0 15px var(--accent);
+}
 
