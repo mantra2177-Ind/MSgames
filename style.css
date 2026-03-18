@@ -16,7 +16,9 @@ body {
     max-width: 400px;
     padding: 10px;
 }
-
+canvas {
+    touch-action: none;
+}
 .stats {
     display: flex;
     justify-content: space-between;
