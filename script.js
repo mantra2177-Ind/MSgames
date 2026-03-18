@@ -63,7 +63,35 @@ function gameLoop() {
     draw();
     setTimeout(gameLoop, 100); // Constant speed for stability
 }
+let touchStartX = 0;
+let touchStartY = 0;
 
+canvas.addEventListener("touchstart", function (e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+});
+
+canvas.addEventListener("touchmove", function (e) {
+    if (!touchStartX || !touchStartY) return;
+
+    let touchEndX = e.touches[0].clientX;
+    let touchEndY = e.touches[0].clientY;
+
+    let dx = touchEndX - touchStartX;
+    let dy = touchEndY - touchStartY;
+
+    // Detect swipe direction
+    if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0 && direction !== "LEFT") direction = "RIGHT";
+        else if (dx < 0 && direction !== "RIGHT") direction = "LEFT";
+    } else {
+        if (dy > 0 && direction !== "UP") direction = "DOWN";
+        else if (dy < 0 && direction !== "DOWN") direction = "UP";
+    }
+
+    touchStartX = 0;
+    touchStartY = 0;
+});
 function draw() {
     // Background Checkerboard
     for (let i = 0; i < 20; i++) {
