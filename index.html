@@ -2,35 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Beta // v1.0.4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snake Beta // Mobile</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-wrapper">
         <div class="header">
             <div class="brand">SNAKE<span>_BETA</span></div>
-            <div class="score-container">
-                <div class="score-card">
-                    <span class="label">SCORE</span>
-                    <span id="score">00</span>
-                </div>
-                <div class="score-card">
-                    <span class="label">BEST</span>
-                    <span id="highScore">00</span>
-                </div>
-            </div>
+            <div id="score">00</div>
         </div>
 
         <div class="canvas-area">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <div id="overlay" class="overlay">
-                <p>PRESS ANY ARROW TO START</p>
-            </div>
+            <canvas id="gameCanvas" width="300" height="300"></canvas>
+            <div id="overlay" class="overlay">TAP ARROW TO START</div>
         </div>
 
-        <div class="controls">
-            <button id="resetBtn">RESET_SYSTEM</button>
+        <div class="dpad">
+            <div class="row"><button class="ctrl" id="up">▲</button></div>
+            <div class="row">
+                <button class="ctrl" id="left">◀</button>
+                <button class="ctrl" id="down">▼</button>
+                <button class="ctrl" id="right">▶</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
