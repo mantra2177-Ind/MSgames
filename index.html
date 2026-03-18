@@ -2,29 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Classic Snake Pro</title>
+    <title>Snake Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="ui">
-            <div class="score-card">🍎 <span id="score">0</span></div>
-            <div class="score-card">🏆 <span id="highScore">0</span></div>
-        </div>
 
-        <div class="canvas-wrapper">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <div id="startOverlay" class="overlay">TAP ARROWS TO START</div>
-        </div>
+<h1>🐍 Snake Game</h1>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+<p>Score: <span id="score">0</span></p>
 
-        <div class="dpad">
-            <button class="btn up" id="uBtn">▲</button>
-            <button class="btn left" id="lBtn">◀</button>
-            <button class="btn down" id="dBtn">▼</button>
-            <button class="btn right" id="rBtn">▶</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
